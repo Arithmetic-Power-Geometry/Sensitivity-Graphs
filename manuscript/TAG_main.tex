@@ -1,0 +1,457 @@
+
+\documentclass[twoside,12pt,letterpaper]{article}
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{mathptmx}
+\pagestyle{empty}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,array,longtable,tabularx}
+\usepackage{ragged2e}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{microtype}
+\usepackage{hyperref}
+\hypersetup{hidelinks}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\usepackage[backend=biber,style=authoryear,maxcitenames=2,maxbibnames=99]{biblatex}
+\addbibresource{references.bib}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\title{Cospectral Boolean Sensitivity Graphs Can Have Different Global Geometry: An Exact Separation and Infinite Family}
+
+\author{
+	Mohammad Amir Khusru Akhtar\textsuperscript{1,*}
+	and Anand Nayyar\textsuperscript{2}\\[6pt]
+	\small \textsuperscript{1}Faculty of Computing and Information Technology,\\
+	\small Usha Martin University, Ranchi, Jharkhand, India\\
+	\small \texttt{akakhtar.2024@gmail.com}\\[8pt]
+	\small \textsuperscript{2}School of Computer Science and Artificial Intelligence (SCA),\\
+	\small Duy Tan University, Da Nang, Viet Nam\\
+	\small \texttt{anandnayyar@dtu.edu.vn}\\[6pt]
+	\small *Corresponding author: akakhtar.2024@gmail.com
+}
+\date{}
+
+\begin{document}
+\thispagestyle{empty}
+%\maketitle % 
+
+\begin{abstract}
+Boolean functions are commonly compared through scalar complexity measures such as sensitivity, block sensitivity, certificate complexity, polynomial degree, and deterministic decision-tree depth. Spectral information from hypercube-derived graphs provides a richer control, but it remains unclear how much global sensitivity geometry such summaries determine. We show that even a strengthened collection of Boolean complexity measures together with the complete adjacency spectrum does not determine the connected-component geometry of the sensitivity graph. An exhaustive search of all $\binom{32}{5}=201{,}376$ five-variable truth sets with five positive inputs yields an explicit pair of Boolean functions that agree in essential-variable count, sensitive-edge count, maximum sensitivity, sensitivity-degree histogram, sorted directional sensitivity counts, block sensitivity, deterministic decision-tree depth, certificate complexity, GF(2) degree, and real multilinear degree. Their active sensitivity graphs are exactly adjacency-cospectral, as certified by equality of their integer characteristic polynomials, yet their active component sizes are $(16,4)$ versus $(11,9)$ and their diameter profiles are $(6,2)$ versus $(4,4)$. We then lift the pair by XOR with parity on fresh variables. The lift preserves equality of the matched complexity controls and exact cospectrality while retaining different component-size and diameter profiles, producing a separation in every essential dimension $N\ge 5$. Thus standard Boolean complexity information, even augmented by the full adjacency spectrum, does not determine global sensitivity-graph geometry.
+\end{abstract}
+
+\noindent\textbf{Keywords:} Boolean functions; sensitivity graphs; cospectral graphs; Boolean complexity; hypercubes; graph products
+
+\section{Introduction}
+Boolean functions admit many complementary notions of complexity. Sensitivity counts input coordinates whose local flip changes the output, block sensitivity allows disjoint blocks of flips, certificate complexity measures how many input coordinates suffice to certify an output, polynomial degree captures algebraic representation, and deterministic decision-tree depth measures worst-case query complexity. These measures are deeply related but not identical \parencite{nisan1991,nisan1994,buhrman2002,odonnell2014}. The sensitivity conjecture, resolved by Huang using a spectral argument on induced subgraphs of the hypercube, further demonstrated the usefulness of graph structure and eigenvalues in understanding Boolean complexity \parencite{huang2019}.
+
+A natural next question is not whether these measures are related, but what they fail to determine. A Boolean function $f:\{0,1\}^n\to\{0,1\}$ defines a sensitivity graph on the $n$-cube: two Hamming-neighbor inputs are joined exactly when the function value changes across that edge. Scalar measures summarize this graph only partially, while the adjacency spectrum supplies global spectral information. Yet graph spectra in general do not uniquely determine graph structure \parencite{godsil2001,brouwer2012,cvetkovic2010}. The question addressed here for Boolean sensitivity graphs is whether a rich combination of standard Boolean measures and spectral information can still leave genuinely different global sensitivity geometry.
+
+We answer this in the affirmative. Our contribution is not a new definition of sensitivity, a new spectral invariant, or a new graph product. Instead, we prove a non-determination result: a strengthened collection of conventional Boolean complexity measures together with exact adjacency cospectrality does not determine the component-size distribution or diameter profile of a sensitivity graph.
+
+The main contributions are as follows. First, we give an explicit five-variable pair with matching strengthened Boolean complexity controls and exactly cospectral active sensitivity graphs, but different component sizes and diameters. Second, we document exact enumeration of the $n=5$ fixed-weight layers $k=4,5$ and an independent all-function computational exclusion for $n\le4$ under the stated strengthened signature. Third, we give a Boolean-specific common-neighbor Gram certificate and prove an infinite-family lifting theorem using XOR with parity on fresh coordinates. The resulting Cartesian-product sensitivity graphs remain exactly cospectral while the geometric separation persists in every essential dimension $N\ge5$. Finally, we state the modeling implication carefully: any method that factors only through the matched summary and adjacency spectrum cannot recover the separated global geometry.
+
+The distinction matters because a graph may share many local, algebraic, query-complexity, and spectral statistics with another graph while still organizing sensitive transitions into globally different connectivity structures. Our result isolates this failure within the restricted class of sensitivity graphs arising from Boolean functions, rather than in arbitrary graph families.
+
+\section{Background and related work}
+\subsection{Boolean complexity measures and the sensitivity program}
+Sensitivity, block sensitivity, certificate complexity, deterministic decision-tree depth, and polynomial degree form a classical family of Boolean-function complexity measures. Their structural relationships were developed through decision-tree, polynomial, and query-complexity methods and are now standard points of comparison \parencite{nisan1991,nisan1994,buhrman2002,wegener1987,jukna2012,odonnell2014}. The polynomial method also connects exact and approximate polynomial representations to classical and quantum query complexity \parencite{beals1998,dewolf2002,midrijanis2004,aaronson2003,bernstein1997}. Later adversary and span-program formulations sharpened the query-complexity picture and made spectral and linear-algebraic structure increasingly central \parencite{hoyer2007,reichardt2011,reichardt2012,lee2011,ambainis2017,aaronson2021}. Communication complexity provides a related framework in which Boolean functions are compressed through different operational summaries \parencite{kushilevitz1997}.
+
+The sensitivity conjecture focused attention on whether ordinary sensitivity is polynomially related to block sensitivity and hence to the wider family of standard measures. Explicit separations and intermediate notions progressively clarified the landscape \parencite{rubinstein1995,kenyon2004,virza2011,hatami2011,he2019}. Huang's proof resolved the conjecture by combining Boolean complexity with an eigenvalue argument for induced hypercube subgraphs \parencite{huang2019,chung1988}. Subsequent work has refined relations among decision-tree complexity, degree, certificate complexity, and sensitivity-derived quantities \parencite{chugh2023,nalli2026}. Spectral sensitivity---the largest adjacency eigenvalue of the sensitivity graph---has become a particularly useful scalar spectral measure; recent work studies its extremal behavior and its separation from other Boolean measures \parencite{aaronson2021,prusis2025,meiburg2026}. Our question is orthogonal to improving another inequality: we hold a deliberately broad collection of these controls fixed and ask what global graph geometry can nevertheless vary.
+
+\subsection{Hypercube geometry and Fourier-analytic context}
+The sensitivity graph is a cut subgraph of the Boolean cube, so its possible structures are constrained by hypercube geometry. Edge-isoperimetric and induced-subgraph questions on the cube have a long history \parencite{lindsey1964,harper1966,bernstein1967,hart1976,chung1988,bollobas1991,ellis2011}. General combinatorial and graph-theoretic treatments provide the ambient language for cuts, components, matchings, distances, and automorphisms used here \parencite{bollobas1986,diestel2017,lovasz2012}. The Boolean cube is also the natural domain for Fourier-analytic notions of influence and average sensitivity. Foundational influence inequalities and later isoperimetric formulations show how local edge behavior can constrain, but does not fully encode, global Boolean structure \parencite{kahn1988,bourgain1992,talagrand1994,friedgut1998,falik2007,odonnell2014}. These results motivate treating directional and degree information as meaningful controls rather than as arbitrary statistics.
+
+\subsection{Spectra, cospectrality, and structural non-identifiability}
+Spectral graph theory extracts global information from adjacency and related matrices, but the adjacency spectrum does not in general determine a graph up to isomorphism \parencite{cvetkovic1980,biggs1993,chung1997,godsil2001,cvetkovic2010,brouwer2012}. The question of which graphs are determined by their spectra has generated both characterization results and systematic counterexample constructions \parencite{schwenk1973,godsil1982,vandam2003,haemers2004,vandam2009}. Generalized spectra and switching constructions further demonstrate that even substantial spectral information can coexist with structural ambiguity \parencite{vandam2007,abiad2012,qiu2020}. This general phenomenon does not by itself prove our result: sensitivity graphs form a restricted family of bipartite cut subgraphs of hypercubes, and our pair must simultaneously match conventional Boolean measures. We do not assert that the witness is unrelated to switching constructions or that the classical Gram criterion is new. The distinction is that both graphs arise as Boolean sensitivity graphs and satisfy the additional matched complexity controls.
+
+\subsection{Cartesian products and lifting}
+Cartesian graph products have classical decomposition, metric, and spectral theories \parencite{sabidussi1960,imrich1994,imrich2000,klavzar2002,imrich2008,hammack2011}. Isometric embeddings and product structure are closely connected to hypercube geometry \parencite{graham1985}. In particular, the adjacency eigenvalues of $G\square H$ are the pairwise sums of eigenvalues of the factors \parencite{imrich2008,hammack2011}. We use this standard fact only as a lifting mechanism: XOR with parity on fresh variables turns the sensitivity graph into a Cartesian product with $Q_r$. Neither Cartesian products nor their spectral law are claimed as new.
+
+The relationship to the closest strands of prior work is summarized in \cref{tab:priorwork}. It distinguishes scalar complexity bounds, spectral sensitivity, and general graph cospectrality from the present constrained construction.
+
+\begin{table}[H]
+\centering
+\caption{Comparison with relevant lines of research. The last column specifies the distinction tested by the present construction.}
+\label{tab:priorwork}
+\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\linewidth}{>{\RaggedRight\arraybackslash}p{0.25\linewidth}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}X}
+\toprule
+Literature & Main focus & Distinction considered here\\
+\midrule
+Boolean complexity \parencite{nisan1991,nisan1994,buhrman2002} &
+Relations among sensitivity, certificates, degree and decision-tree measures &
+Jointly matched complexity measures need not fix component geometry.\\
+Hypercube spectra \parencite{huang2019} &
+Spectral methods in the sensitivity conjecture &
+The complete spectrum is held fixed, not merely an extremal eigenvalue.\\
+Spectral sensitivity \parencite{aaronson2021,prusis2025,meiburg2026} &
+Largest eigenvalue and Boolean complexity &
+The counterexample matches the entire adjacency spectrum.\\
+Graph cospectrality \parencite{godsil1982,vandam2003,vandam2009} &
+General constructions and spectral characterization &
+Both graphs must arise as Boolean sensitivity graphs.\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Definitions}
+\begin{definition}[Sensitivity graph]
+For $f:\{0,1\}^n\to\{0,1\}$, the sensitivity graph $G_f$ has vertex set $\{0,1\}^n$. Two vertices $x$ and $x\oplus e_i$ are adjacent exactly when
+\[
+f(x)\neq f(x\oplus e_i).
+\]
+Vertices of degree zero are called inactive. The graph induced by the non-isolated vertices is the \emph{active sensitivity graph}.
+\end{definition}
+
+For a vertex $x$, its degree in $G_f$ is the pointwise sensitivity $s(f,x)$. The maximum degree is therefore the usual sensitivity $s(f)$. We use the following strengthened summary:
+\begin{align*}
+S^\dagger(f)=\bigl(&\operatorname{ess}(f), |E(G_f)|, s(f), H_{\deg}(f),
+\mathbf w^\downarrow(f), \operatorname{Spec}(G_f^{\rm act}),\\
+&\deg_{\mathbb F_2}(f),\deg_{\mathbb R}(f),bs(f),D(f),C(f),
+\{C_0(f),C_1(f)\}\bigr).
+\end{align*}
+where $H_{\deg}$ is the degree histogram over all cube vertices, $\mathbf w^\downarrow$ is the sorted vector of sensitive-edge counts by coordinate, $\operatorname{Spec}$ is the complete adjacency spectrum of the active graph, $bs$ is block sensitivity, $D$ is deterministic decision-tree depth, and $C,C_0,C_1$ are certificate complexities.
+
+The residual geometric quantities examined are
+\[
+G^\star(f)=\bigl(\operatorname{Comp}(f),\nu(f),\operatorname{Diam}(f)\bigr),
+\]
+where $\operatorname{Comp}(f)$ is the sorted active-component-size profile, $\nu(f)$ is maximum matching size, and $\operatorname{Diam}(f)$ is the sorted active-component-diameter profile. In the witness below, maximum matching size remains equal, whereas the component-size and diameter profiles separate.
+
+\section{Exact five-variable separation}
+We first state the explicit witness. The two sparse truth sets are
+\[
+A=\{00000,01000,10000,11100,11111\},
+\]
+\[
+B=\{00000,00011,00101,01000,10000\}.
+\]
+Let $f_A$ and $f_B$ be their indicator functions.
+
+The matched controls and separated geometry are summarized in \cref{tab:witness}.
+
+\begin{table}[H]
+\centering
+\caption{Exact comparison of the five-variable witness pair. The two functions match all listed strengthened controls, including the full adjacency spectrum, while their global active-component geometry differs.}
+\label{tab:witness}
+\begin{tabular}{p{0.45\linewidth}cc}
+\toprule
+Quantity & $f_A$ & $f_B$\\
+\midrule
+Essential variables & 5 & 5\\
+Sensitive edges & 21 & 21\\
+Maximum sensitivity & 5 & 5\\
+Degree histogram & \multicolumn{2}{c}{$((0,12),(1,10),(2,4),(3,2),(4,2),(5,2))$}\\
+Sorted directional counts & \multicolumn{2}{c}{$(3,3,5,5,5)$}\\
+GF(2) degree & 5 & 5\\
+Real multilinear degree & 5 & 5\\
+Block sensitivity & 5 & 5\\
+Decision-tree depth & 5 & 5\\
+Worst-case certificate complexity & 5 & 5\\
+Unordered one-sided certificate profile & $\{3,5\}$ & $\{3,5\}$\\
+Adjacency characteristic polynomial & \multicolumn{2}{c}{exactly identical}\\
+Maximum matching size & 5 & 5\\
+Active component sizes & $(16,4)$ & $(11,9)$\\
+Active component diameters & $(6,2)$ & $(4,4)$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{theorem}[Exact strengthened separation]
+There exist Boolean functions $f,g:\{0,1\}^5\to\{0,1\}$ with identical strengthened summaries $S^\dagger(f)=S^\dagger(g)$ but different active component-size distributions and different active diameter profiles.
+\end{theorem}
+
+\begin{proof}
+Take $f=f_A$ and $g=f_B$. Exact evaluation gives the matched quantities in \cref{tab:witness}. The active adjacency matrices have the same integer characteristic polynomial
+\begin{equation}
+\label{eq:charpoly}
+\chi(\lambda)=\lambda^{10}(\lambda^2-5)(\lambda^2-3)^2(\lambda^4-10\lambda^2+13),
+\end{equation}
+equivalently $\lambda^{20}-21\lambda^{18}+162\lambda^{16}-578\lambda^{14}+957\lambda^{12}-585\lambda^{10}$. Thus the active graphs are exactly adjacency-cospectral rather than merely numerically close in spectral radius. Yet their active component-size profiles are respectively $(16,4)$ and $(11,9)$, and their diameter profiles are $(6,2)$ and $(4,4)$. Hence $S^\dagger(f)=S^\dagger(g)$ does not determine either the active component-size distribution or the active diameter profile.
+\end{proof}
+
+The actual active sensitivity graphs underlying the theorem are shown in \cref{fig:witnessgraphs}. The drawing is a visualization of the exact graph data; the proof itself uses the computed invariants and the exact polynomial in \cref{eq:charpoly}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\linewidth]{../figures/figure1_witness_graphs.pdf}
+\caption{Actual active sensitivity graphs of the explicit witness pair. The layouts are for visualization only. The graphs have identical adjacency characteristic polynomials and all strengthened controls in \cref{tab:witness}, but different component-size and diameter profiles.}
+\label{fig:witnessgraphs}
+\end{figure}
+
+The hierarchy of matched information and the residual separation is summarized visually in \cref{fig:hierarchy}.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../figures/figure2_invariant_hierarchy.pdf}
+\caption{Hierarchy of controls imposed on the witness pair. Agreement extends from local and directional statistics through standard Boolean complexity measures to the complete adjacency characteristic polynomial, while component-size and diameter profiles still separate.}
+\label{fig:hierarchy}
+\end{figure}
+
+\section{Exhaustive finite verification}
+The explicit theorem above needs only the displayed witness, but the discovery and completeness statement for the stated sparse layer comes from exhaustive enumeration. For $n=5$ and $k=|f^{-1}(1)|=5$, every five-element subset of the 32 cube vertices was considered. Thus the raw search contains
+\[
+\binom{32}{5}=201{,}376
+\]
+truth sets.
+
+The exact search protocol is given in \cref{alg:search}. Within a fixed-weight layer we quotient only by permutations of the five input coordinates, the group $S_5$. Output complementation changes the weight from $k$ to $32-k$ and is not an internal symmetry of either enumerated layer. Every canonical representative is evaluated with integer arithmetic; no rounded eigenvalue or spectral-radius filter excludes any candidate.
+
+\begin{algorithm}[H]
+\caption{Exact exhaustive sensitivity-geometry separation search}\label{alg:search}
+\begin{algorithmic}[1]
+\Require $n=5$ and $k\in\{4,5\}$
+\For{each $k$-subset $S\subseteq\{0,1\}^5$}
+\State retain the lexicographically least $S_5$-permuted mask, once
+\EndFor
+\For{each canonical mask}
+\State compute sensitive-edge count, maximum sensitivity, full degree histogram,
+\Statex \hspace{\algorithmicindent} sorted directional edge counts and essential-variable count
+\State compute the exact integer Gram characteristic polynomial
+\State compute nontrivial component sizes and diameters by graph traversal
+\State insert the mask into its joint (cheap signature, polynomial) class
+\EndFor
+\For{each joint class with different component geometries}
+\State refine by block sensitivity, decision-tree depth, one-sided certificates,
+\Statex \hspace{\algorithmicindent} GF(2) degree and real multilinear degree
+\EndFor
+\State \Return classes retaining different geometry under all matched controls
+\end{algorithmic}
+\end{algorithm}
+
+\begin{table}[H]
+\centering
+\caption{Exact fixed-weight enumeration at $n=5$. Canonical representatives are $S_5$ orbits. The joint key combines the specified cheap signature and exact Gram characteristic polynomial. ``Strong'' counts joint classes retaining different component geometry after the full complexity refinement.}\label{tab:searchcounts}
+\small\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrrr}\toprule
+$k$ & Raw sets & $S_5$ orbits & Cheap & Spectral & Joint & Strong\\\midrule
+4 & 35,960 & 625 & 24 & 27 & 29 & 0\\
+5 & 201,376 & 2,674 & 63 & 86 & 92 & 1\\\bottomrule
+\end{tabular}
+\end{table}
+
+The exact enumeration counts are reported in \cref{tab:searchcounts}. The geometry-discordant joint class at $k=5$ contains 36 $S_5$ representatives, split equally between the active component profiles $(16,4)$ and $(11,9)$. All 36 share $(bs,D,C_0,C_1,\deg_{\mathbb F_2},\deg_{\mathbb R})=(5,5,3,5,5,5)$. The count one is a statement about this explicitly defined joint classification, not uniqueness among all five-variable functions. The search uses exact integer spectral certificates throughout.
+
+\subsection{A finite minimum-dimension certificate}
+\begin{proposition}[Minimum dimension for the strengthened separation]\label{prop:minimal}
+No pair of Boolean functions on at most four variables has identical exact sensitivity adjacency spectra and the strengthened Boolean controls in $S^\dagger$ but different nontrivial sensitivity-component size--diameter multisets. Consequently the five-variable witness has minimum dimension for this particular joint matching condition.
+\end{proposition}
+\begin{proof}
+For $n=1,2,3,4$, enumerate all $2^{2^n}$ truth tables. Quotient by input-coordinate permutations, input-bit flips and output complementation. These are automorphisms of the sensitivity graph (up to relabeling), and the unordered one-sided certificate pair is invariant under output complementation. The resulting numbers of orbits are respectively $2,4,14,222$. On each representative, construct the sensitivity graph exactly, calculate the integer Gram characteristic polynomial, the complete degree histogram, sorted directional counts, maximum sensitivity, block sensitivity, deterministic decision-tree depth, unordered one-sided certificate pair, and both algebraic degrees. Compare the nontrivial component-size--diameter multiset within each equal-signature class. There are respectively $2,4,14,222$ distinct combined-signature classes and none contains two different component geometries. The exhaustive finite computation and independently implemented checks are provided in the reproducibility record. The five-variable pair in \cref{tab:witness} supplies the upper bound.
+\end{proof}
+
+\subsection{An exact common-neighbor spectral certificate}
+\begin{proposition}[Boolean-cut Gram criterion]\label{prop:gram}
+Let $S=f^{-1}(1)$ have cardinality $k$ and define the $k\times k$ matrix $H(S)$ by
+\[
+H_{xx}=n-|N(x)\cap S|,\qquad
+H_{xy}=\begin{cases}2-|N(x)\cap N(y)\cap S|,&d_H(x,y)=2,\\0,&d_H(x,y)\ne2,\end{cases}\quad(x\ne y).
+\]
+For two Boolean functions on the same $n$ variables with equally large positive truth sets, their sensitivity graphs are adjacency-cospectral if and only if the characteristic polynomials of their matrices $H(S)$ agree; equivalently, their first $k$ power traces agree.
+\end{proposition}
+\begin{proof}
+Order the cube vertices by $S$ and its complement, and let $M$ be the $k\times(2^n-k)$ matrix of sensitive edges between the two parts. The sensitivity adjacency matrix is $\left(\begin{smallmatrix}0&M\\M^{\mathsf T}&0\end{smallmatrix}\right)$, while $H(S)=MM^{\mathsf T}$. Diagonal entries count neighbors outside $S$. Distinct cube vertices have common neighbors precisely when their Hamming distance is two, and then have exactly two, yielding the displayed off-diagonal formula. At fixed $n,k$, the nonzero adjacency eigenvalues are the signed singular values of $M$, with the number of zero eigenvalues fixed by the Gram characteristic polynomial. Thus equality of Gram polynomials is equivalent to equality of full adjacency spectra. Newton's identities give the equivalent first-$k$ trace condition.
+\end{proof}
+
+For the displayed witnesses the exact Gram matrices are
+\[
+H(A)=\begin{pmatrix}3&0&0&0&0\\0&4&1&2&0\\0&1&4&2&0\\0&2&2&5&2\\0&0&0&2&5\end{pmatrix},\quad
+H(B)=\begin{pmatrix}3&2&2&0&0\\2&5&2&0&0\\2&2&5&0&0\\0&0&0&4&1\\0&0&0&1&4\end{pmatrix}.
+\]
+Both have characteristic polynomial $(t-5)(t-3)^2(t^2-10t+13)$, establishing the exact full sensitivity spectrum. The Gram reduction is a classical bipartite-matrix identity specialized here to cube cuts, not a claim of a new general cospectrality mechanism.
+
+\section{Directional sensitivity and sparse truth-set structure}
+Let $S=f^{-1}(1)$ and let $E_i(S)$ be the number of internal edges of the induced subgraph $Q_n[S]$ in coordinate direction $i$. Every vertex has exactly one cube edge in direction $i$. Counting the boundary edges in direction $i$ gives
+\begin{equation}
+ w_i(f)=|S|-2|E_i(S)|,
+ \label{eq:direction}
+\end{equation}
+where $w_i(f)$ is the number of sensitive edges in direction $i$.
+
+\begin{lemma}[Directional-profile equivalence at fixed layer]
+For fixed $|S|=k$, the labeled directional sensitivity vector and the labeled directional internal-edge vector determine each other exactly, coordinate by coordinate, via
+\[
+|E_i(S)|=\frac{k-w_i(f)}{2}.
+\]
+After quotienting by coordinate permutations, their sorted multisets also determine each other.
+\end{lemma}
+
+\begin{proof}
+Rearrange \cref{eq:direction}. The transformation is coordinatewise and invertible for fixed $k$.
+\end{proof}
+
+Summing \cref{eq:direction} over coordinates also gives
+\[
+|E(G_f)|=n|S|-2|E(Q_n[S])|.
+\]
+These identities explain why directional sensitivity is informative in sparse layers, but the witness pair shows that even this information, combined with much stronger algebraic, query, certificate, and spectral controls, does not determine the global active-component geometry.
+
+\section{Infinite-family lifting theorem}
+The finite separation can be extended without changing the underlying mechanism. Let $p_r(z)=z_1\oplus\cdots\oplus z_r$ be parity on $r$ fresh variables and define
+\[
+F_r(x,z)=f_A(x)\oplus p_r(z),\qquad
+G_r(x,z)=f_B(x)\oplus p_r(z).
+\]
+
+\begin{lemma}[Sensitivity graph under parity lift]
+For every $r\ge0$,
+\[
+G_{F_r}=G_{f_A}\square Q_r,
+\qquad
+G_{G_r}=G_{f_B}\square Q_r.
+\]
+\end{lemma}
+
+\begin{proof}
+Flipping an original $x$-coordinate changes $F_r$ exactly when it changes $f_A$, independently of $z$. Flipping any fresh parity coordinate always flips $p_r$ and therefore always flips the output. This is precisely the adjacency rule of the Cartesian product with $Q_r$. The argument for $G_r$ is identical.
+\end{proof}
+
+Because the Cartesian-product adjacency spectrum consists of pairwise sums of factor eigenvalues, exact cospectrality of the full base graphs implies exact cospectrality of every lifted pair \parencite{imrich2008,hammack2011}. The two base graphs have the same 12 isolated vertices in addition to their cospectral active parts, so their full adjacency spectra also agree. For $r\ge1$, every vertex of $G_h\square Q_r$ is non-isolated because each fresh parity coordinate contributes an incident sensitive edge. Hence the full lifted graph coincides with its active graph, and the lifted active sensitivity graphs are exactly cospectral.
+
+For $r\ge1$, every formerly isolated base vertex produces a component isomorphic to $Q_r$. Hence the complete active-component profiles of the lifts are
+\[
+\operatorname{Comp}(F_r)=\bigl(16\cdot2^r,4\cdot2^r,\underbrace{2^r,\ldots,2^r}_{12\text{ times}}\bigr),
+\]
+\[
+\operatorname{Comp}(G_r)=\bigl(11\cdot2^r,9\cdot2^r,\underbrace{2^r,\ldots,2^r}_{12\text{ times}}\bigr),
+\]
+and their diameter profiles are
+\[
+\operatorname{Diam}(F_r)=\bigl(6+r,2+r,\underbrace{r,\ldots,r}_{12\text{ times}}\bigr),
+\]
+\[
+\operatorname{Diam}(G_r)=\bigl(4+r,4+r,\underbrace{r,\ldots,r}_{12\text{ times}}\bigr).
+\]
+At $r=0$ these reduce, after omitting isolated vertices from the active graph, to the base profiles in \cref{tab:witness}. The separation therefore persists for every $r\ge0$.
+
+The Boolean complexity controls also transform exactly. For a nonconstant Boolean function $h$, write $H_r=h\oplus p_r$.
+
+\begin{lemma}[Complexity under parity lift]
+For $h\in\{f_A,f_B\}$ and every $r\ge0$,
+\[
+s(H_r)=s(h)+r,\qquad bs(H_r)=bs(h)+r,\qquad D(H_r)=D(h)+r,
+\]
+and, pointwise,
+\[
+C(H_r;(x,z))=C(h;x)+r.
+\]
+Consequently $C(H_r)=C(h)+r$. If $r\ge1$, then
+\[
+C_0(H_r)=C_1(H_r)=C(h)+r.
+\]
+\end{lemma}
+
+\begin{proof}
+At $(x,z)$, the sensitive original coordinates are exactly those sensitive for $h$ at $x$, while every fresh coordinate is sensitive. Thus $s(H_r,(x,z))=s(h,x)+r$.
+
+For block sensitivity, an optimal family of disjoint sensitive blocks for $h$ at $x$, together with the $r$ fresh singleton coordinates, gives $bs(H_r,(x,z))\ge bs(h,x)+r$. Conversely, write each block in any disjoint sensitive-block family for $H_r$ as $(A,C)$, where $A$ uses original coordinates and $C$ fresh coordinates. If $|C|$ is even, sensitivity of $(A,C)$ implies that $A$ is a sensitive block for $h$; these projections are disjoint, so there are at most $bs(h,x)$ such blocks. Every remaining block has $|C|$ odd and contains a fresh coordinate, so disjointness permits at most $r$ of them. Hence $bs(H_r,(x,z))\le bs(h,x)+r$, proving the block-sensitivity identity after maximization.
+
+For the present base witnesses, querying all fresh variables and then an optimal base decision tree gives $D(H_r)\le5+r$. Since each base witness has an input with certificate complexity five, every lifted certificate at that input has size $5+r$; consequently $D(H_r)\ge5+r$. Thus the asserted depth equality holds for both witnesses. This argument does not require a general direct-sum theorem for arbitrary $h$.
+
+Finally, every certificate for $H_r$ must fix all fresh coordinates for the same single-bit-flip reason. Once they are fixed, the remaining assignments must certify $h(x)$, giving $C(H_r;(x,z))=C(h;x)+r$. For $r\ge1$, either parity value can accompany every base input in either output class of $H_r$, so both one-sided maxima equal $C(h)+r$.
+\end{proof}
+
+For the present witnesses, the algebraic and graph-count transformations are immediate. Over $\mathbb F_2$, parity is linear in the fresh variables, so $\deg_{\mathbb F_2}(H_r)=5$. In the real multilinear representation, $a\oplus b=a+b-2ab$; because the variable sets are disjoint and the base real degree is 5, the highest-degree product term is nonzero and $\deg_{\mathbb R}(H_r)=5+r$. Each original sensitive edge has $2^r$ copies, each fresh coordinate contributes $32\cdot2^{r-1}$ edges, and every pointwise graph degree increases by $r$. The resulting witness-specific laws are collected in \cref{tab:liftlaws}.
+
+\begin{table}[H]
+\centering
+\caption{Exact transformation laws for the witness lifts $H_r(x,z)=h(x)\oplus p_r(z)$, where $h\in\{f_A,f_B\}$.}
+\label{tab:liftlaws}
+\begin{tabular}{p{0.34\linewidth}p{0.56\linewidth}}
+\toprule
+Quantity & Transformation\\
+\midrule
+Essential variables & $\operatorname{ess}(H_r)=5+r$\\
+Maximum sensitivity & $s(H_r)=5+r$\\
+Block sensitivity & $bs(H_r)=5+r$\\
+Decision-tree depth & $D(H_r)=5+r$\\
+Worst-case certificate complexity & $C(H_r)=5+r$\\
+One-sided certificates, $r\ge1$ & $C_0(H_r)=C_1(H_r)=5+r$\\
+GF(2) degree for these witnesses & $\deg_{\mathbb F_2}(H_r)=5$\\
+Real multilinear degree & $\deg_{\mathbb R}(H_r)=5+r$\\
+Sensitive-edge count & $|E(G_{H_r})|=21\cdot2^r+32r2^{r-1}$\\
+Directional counts & base counts multiply by $2^r$; each fresh coordinate contributes $16\cdot2^r$ edges\\
+Degree histogram & every base degree $d$ becomes $d+r$, with multiplicity multiplied by $2^r$\\
+Graph & $G_{H_r}=G_h\square Q_r$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The construction is illustrated in \cref{fig:lift}. The figure emphasizes the graph-product mechanism and the contribution of formerly isolated base vertices.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{../figures/figure3_parity_lift.pdf}
+\caption{Parity-product lift. Each fresh parity coordinate is sensitive everywhere, giving the Cartesian product with a hypercube. Cospectrality is preserved, all fresh variables are essential, and the component-geometry separation persists.}
+\label{fig:lift}
+\end{figure}
+
+\begin{theorem}[Infinite strengthened separation]
+For every integer $N\ge5$, there exist Boolean functions $F_N,G_N:\{0,1\}^N\to\{0,1\}$ with identical strengthened summaries $S^\dagger(F_N)=S^\dagger(G_N)$ and exactly adjacency-cospectral active sensitivity graphs, but with different active component-size distributions and different active diameter profiles.
+\end{theorem}
+
+\begin{proof}
+Set $r=N-5$ and take $F_N=F_r$, $G_N=G_r$. The graph-product lemma preserves exact cospectrality, and the displayed component formulas preserve the component-size and diameter separation. The complexity lemma and the remaining exact laws in \cref{tab:liftlaws} depend only on base quantities that agree for $f_A$ and $f_B$ by \cref{tab:witness}. Hence every component of $S^\dagger$ remains equal after lifting. The case $r=0$ is the base separation, while the formulas above establish every $r\ge1$.
+\end{proof}
+
+\section{Implication for summary-mediated models}
+The result has a simple but useful modeling consequence. Suppose a computational or physical model assigns a predicted resource or behavior using only a summary $S(f)$. If two functions have the same summary, any such model must assign them the same prediction.
+
+\begin{proposition}[Summary-mediated blindness]
+Let $C(f)=\Phi(S(f))$ for some map $\Phi$. If $S(f)=S(g)$, then $C(f)=C(g)$. Therefore no $S$-mediated model can exactly represent a target property $T$ on a family containing $f,g$ when $T(f)\neq T(g)$.
+\end{proposition}
+
+\begin{proof}
+Immediate from function composition: $S(f)=S(g)$ implies $\Phi(S(f))=\Phi(S(g))$.
+\end{proof}
+
+The proposition is elementary; the scientific content comes from the nontrivial construction of a pair for which a rich, physically and computationally meaningful summary---including the full adjacency spectrum---matches while global sensitivity geometry differs. This does not establish a physical speedup or hardware lower bound. It identifies a specific information loss that any model using only those controls necessarily incurs.
+
+\section{Reproducibility}
+All computational results can be reproduced using the public research software and verification workflow. The implementation provides exact sensitivity-graph construction, Boolean complexity measures, sparse-layer enumeration, component analysis, and characteristic-polynomial verification. The workflow runs regression tests and exhaustive searches of the $n=5$, $k=4$ and $k=5$ sparse layers. The repository contains exact witness checks, fixed-weight orbit and spectral verification code, minimum-dimension checks, the parity-lift verifier, and their evidence registers. Generated local artifacts are distinguished from files actually committed to GitHub.
+
+The executable research extension is available at \href{https://github.com/Arithmetic-Power-Geometry/Sensitivity-Graphs}{the project repository}; the independently implemented Python checks use Python 3 and, for one minimum-dimension cross-check, SymPy. All quantities supporting the separation theorem and the reported exhaustive classification are computed exactly, without numerical spectral-radius pruning. The package records the code, workflow, parameters, and artifacts needed to reconstruct the reported results \parencite{peng2011,sandve2013,stodden2014,wilkinson2016,pineau2021}. Its provenance and reporting practices are consistent with established guidance on reproducible computational research \parencite{gentleman2007,boettiger2015,feitelson2015,heroux2015,leek2017,collberg2016,stodden2016,ivie2018,plesser2018,rule2019,national2019}.
+
+\section{Limitations}
+The separation theorem establishes non-determination of specific global sensitivity-graph properties by the matched summary and full adjacency spectrum. It does not show that component size or diameter is by itself a superior Boolean complexity measure, nor does it establish a concrete hardware advantage, physical lower bound, or new computational model. The fixed-weight $n=5$ enumeration is complete for $k=4,5$, and the separate minimum-dimension audit exhausts all functions for $n\le4$; the infinite theorem comes from the analytic parity-product lift rather than exhaustive enumeration in larger dimensions.
+
+The fixed-weight search quotient uses input-coordinate permutations only; the separate all-weight $n\le4$ audit uses input permutations, input bit flips, and output complementation. Accordingly, the reported number of canonical representatives should not be interpreted as a classification under every automorphism that might be considered for the Boolean cube. The theorem is unaffected because it relies on an explicit verified pair rather than on uniqueness of its orbit.
+
+Finally, cospectrality controls the complete adjacency eigenvalue multiset but not eigenvectors, component decomposition, or metric structure. The present result isolates this limitation inside Boolean sensitivity graphs. Other global invariants may remain determined by the strengthened summary, and identifying the minimal additional information needed to recover specific geometric properties is open.
+
+\section{Discussion}
+The witness pair demonstrates that different kinds of information about a Boolean function can agree simultaneously without fixing how sensitive transitions are globally organized. The degree histogram matches local sensitivity counts. Directional counts match how sensitive edges are distributed among coordinates. Block sensitivity, certificate complexity, decision-tree depth, and polynomial degrees match conventional complexity perspectives. Exact adjacency cospectrality matches every spectral moment encoded by the characteristic polynomial. Nevertheless, the sensitive edges form different connected-component structures with different metric diameters.
+
+This distinction is stronger than showing that one scalar invariant fails: the counterexample survives a deliberately redundant collection of controls. It therefore supports a general methodological point. When a proposed resource model or empirical predictor compresses a Boolean function into a finite list of conventional measures, even adding a complete graph spectrum may leave global structural information unresolved. Whether that unresolved geometry matters operationally is model dependent and must be established separately; the present theorem supplies the mathematical prerequisite for such investigations.
+
+The infinite family also rules out an explanation based solely on a low-dimensional accident. XOR with parity converts the finite witness into a sequence with all variables essential. The Cartesian-product structure makes the persistence of cospectrality and geometric separation transparent, while the Boolean complexity measures transform equally on the two sides.
+
+\section{Conclusion}
+We proved that a rich collection of standard Boolean complexity measures together with the complete adjacency spectrum does not determine the global component geometry of a Boolean sensitivity graph. An explicit five-variable pair matches essential-variable count, sensitive-edge count, maximum sensitivity, degree histogram, directional sensitivity counts, block sensitivity, decision-tree depth, certificate complexity, GF(2) degree, real multilinear degree, and the full active adjacency spectrum, yet has component-size profiles $(16,4)$ versus $(11,9)$ and diameter profiles $(6,2)$ versus $(4,4)$. The witness is supported by exact Gram characteristic polynomials, the complete $n=5$ fixed-weight $k=4,5$ search, and an independent exhaustive minimum-dimension audit for $n\le4$. A parity-product construction then lifts the separation to every essential dimension $N\ge5$.
+
+The result is a non-determination theorem, not a hardware or physical-speedup claim. Its significance is that even strong scalar, algebraic, query-complexity, and spectral controls can leave global sensitivity geometry unresolved. Future work can ask which additional graph information is minimally sufficient for particular computational or physical resource models.
+
+\section*{Ethics and declarations}
+\textbf{Ethics approval.} This theoretical and computational study uses no human participants, animals, personal data, or clinical data; ethics approval was not required.
+
+\textbf{Conflict of interest.} The authors declare no conflict of interest.
+
+\textbf{Funding.} No specific external funding is reported for this study.
+
+\textbf{Data and code availability.} Source code, tests, workflow definitions, and reproducibility materials are available in the public repository stated in the Reproducibility section.
+
+% Author contributions withheld from TAG final-form PDF; retained verbatim in source/AUTHOR_CONTRIBUTIONS_ORIGINAL.txt for verified portal declarations.
+
+\printbibliography[heading=bibintoc]
+\end{document}
