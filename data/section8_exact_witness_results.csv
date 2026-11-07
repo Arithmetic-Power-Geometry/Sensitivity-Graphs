@@ -1,0 +1,3 @@
+graph,active_vertices,edges,isolates,component_sizes,component_diameters,max_diameter,minimum_two_sample_MSE
+A,20,21,12,16;4,6;2,6,1.0
+B,20,21,12,11;9,4;4,4,1.0
