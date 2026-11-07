@@ -1,0 +1,11 @@
+function,positive_support_binary,positive_support_integer
+A,00000,0
+A,01000,8
+A,10000,16
+A,11100,28
+A,11111,31
+B,00000,0
+B,00011,3
+B,00101,5
+B,01000,8
+B,10000,16

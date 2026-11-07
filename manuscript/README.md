@@ -1,0 +1,1 @@
+The journal manuscript is typeset with TAG_main.tex and references.bib. Run `bash build_manuscript.sh` at the repository root to regenerate all three figures and compile the title-free final-form PDF. The journal's manuscript metadata is entered separately in its submission system.

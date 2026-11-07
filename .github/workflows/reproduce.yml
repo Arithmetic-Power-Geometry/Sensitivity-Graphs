@@ -1,0 +1,29 @@
+name: Exact sensitivity-graph verification
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  exact-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Independent and exhaustive exact checks
+        run: bash reproduce.sh
+      - name: Preserve generated results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sensitivity-exact-results
+          path: results/
+          if-no-files-found: warn

@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+/code/enumerate
+/code/reps_k*.txt
+/code/p04_exact_results.json
+/results/
+/figures/*.pdf
+/manuscript/*.aux
+/manuscript/*.bbl
+/manuscript/*.bcf
+/manuscript/*.blg
+/manuscript/*.log
+/manuscript/*.out
+/manuscript/*.run.xml
+/manuscript/*.fdb_latexmk
+/manuscript/*.fls
+/manuscript/TAG_main.pdf
