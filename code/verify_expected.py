@@ -12,6 +12,10 @@ for k,values in expected.items():
             got["joint_buckets"],got["discordant_geometry_classes"],got["strong_classes"])
     assert counts==values,(k,counts,values)
 
+strong=results["5"]["strong"]
+assert len(strong)==1
+assert len(strong[0]["representatives"])==36
+assert sorted(strong[0]["geometry_counts"].values())==[18,18]
 minimum=[
     "1,4,2,2,0",
     "2,16,4,4,0",
